@@ -20,7 +20,7 @@ const StatCard = ({ icon: Icon, label, value, color }) => (
   </Card>
 );
 
-const SuperAdminDashboard = () => {
+const AdminDashboard = () => {
   const [stats, setStats] = useState({
     campusCount: 0,
     studentCount: 0,
@@ -40,8 +40,8 @@ const SuperAdminDashboard = () => {
   }, []);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Super Admin Dashboard</h1>
+    <div className="space-y-6 my-5">
+      <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
@@ -78,4 +78,4 @@ const SuperAdminDashboard = () => {
   );
 };
 
-export default SuperAdminDashboard;
+export default AdminDashboard;

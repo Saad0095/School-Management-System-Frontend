@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Login from "./pages/auth/Login";
-import SuperAdminDashboard from "./pages/dashboard/SuperAdminDashboard";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -20,7 +20,7 @@ const App = () => {
           }
         >
           {/* Super Admin Routes */}
-          <Route index element={<SuperAdminDashboard />} />
+          <Route index element={<AdminDashboard />} />
           <Route path="campuses" element={<div>Campuses</div>} />
           <Route path="users" element={<div>Users</div>} />
 

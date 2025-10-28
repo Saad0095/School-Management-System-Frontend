@@ -29,7 +29,7 @@ const Navbar = () => {
             variant="outline"
             size="sm"
             onClick={logout}
-            className="flex items-center gap-2 text-gray-700 hover:text-primary"
+            className="flex items-center gap-2 text-gray-700 hover:text-primary cursor-pointer"
           >
             <LogOut size={16} />
             Logout

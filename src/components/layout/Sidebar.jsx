@@ -1,4 +1,4 @@
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from "../../context/AuthContext";
 import {
   Users,
   Building,
@@ -7,63 +7,80 @@ import {
   FileText,
   Brain,
   BarChart,
-} from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+} from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { Separator } from "@/components/ui/separator";
 
 const menuItems = {
-  superadmin: [
-    { label: 'Campuses', icon: Building, path: '/dashboard/campuses' },
-    { label: 'Users', icon: Users, path: '/dashboard/users' },
-    { label: 'Reports', icon: BarChart, path: '/dashboard/reports' },
+  "super-admin": [
+    { label: "Campuses", icon: Building, path: "/dashboard/campuses" },
+    { label: "Users", icon: Users, path: "/dashboard/users" },
+    // { label: "Reports", icon: BarChart, path: "/dashboard/reports" },
   ],
-  campusadmin: [
-    { label: 'Teachers', icon: Users, path: '/dashboard/teachers' },
-    { label: 'Students', icon: GraduationCap, path: '/dashboard/students' },
-    { label: 'Classes', icon: Calendar, path: '/dashboard/classes' },
-    { label: 'Subjects', icon: FileText, path: '/dashboard/subjects' },
+  "campus-admin": [
+    { label: "Teachers", icon: Users, path: "/dashboard/teachers" },
+    { label: "Students", icon: GraduationCap, path: "/dashboard/students" },
+    { label: "Classes", icon: Calendar, path: "/dashboard/classes" },
+    { label: "Subjects", icon: FileText, path: "/dashboard/subjects" },
   ],
-  teacher: [
-    { label: 'Attendance', icon: Calendar, path: '/dashboard/attendance' },
-    { label: 'Exams', icon: FileText, path: '/dashboard/exams' },
-    { label: 'Marks', icon: GraduationCap, path: '/dashboard/marks' },
+  "teacher": [
+    { label: "Attendance", icon: Calendar, path: "/dashboard/attendance" },
+    { label: "Exams", icon: FileText, path: "/dashboard/exams" },
+    { label: "Marks", icon: GraduationCap, path: "/dashboard/marks" },
   ],
-  student: [
-    { label: 'Attendance', icon: Calendar, path: '/dashboard/my-attendance' },
-    { label: 'Marksheets', icon: FileText, path: '/dashboard/my-marksheets' },
-    { label: 'AI Recommendations', icon: Brain, path: '/dashboard/ai-recommendations' },
+  "student": [
+    { label: "Attendance", icon: Calendar, path: "/dashboard/my-attendance" },
+    { label: "Marksheets", icon: FileText, path: "/dashboard/my-marksheets" },
+    {
+      label: "AI Recommendations",
+      icon: Brain,
+      path: "/dashboard/ai-recommendations",
+    },
   ],
 };
 
 const Sidebar = () => {
   const { user } = useAuth();
-  const role = user?.role.toLowerCase() || 'student';
+  const role = user?.role.toLowerCase() || "student";
 
   return (
-    <aside className="h-screen w-64 bg-gray-900 text-white p-4 fixed left-0 top-0">
-      <div className="mb-8">
-        <h1 className="text-xl font-bold">School Management</h1>
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-primary text-white flex flex-col shadow-lg">
+      <div className="px-6 py-5 border-b border-gray-300">
+        <h1 className="text-lg font-semibold tracking-wide">
+          School Management
+        </h1>
+        <p className="text-xs text-white/70 capitalize mt-1">
+          {role} panel
+        </p>
       </div>
-      <nav>
-        <ul className="space-y-2">
+
+      <nav className="flex-1 overflow-y-auto px-4 py-6">
+        <ul className="space-y-1">
           {menuItems[role]?.map((item) => (
             <li key={item.path}>
               <NavLink
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2 rounded-lg transition-colors \${
+                  `flex items-center gap-3 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:bg-gray-800'
+                      ? "bg-white text-primary"
+                      : "text-white/90 hover:bg-white/10"
                   }`
                 }
               >
-                <item.icon size={20} />
+                <item.icon size={18} />
                 <span>{item.label}</span>
               </NavLink>
             </li>
           ))}
         </ul>
       </nav>
+
+      <Separator className="bg-gray-300" />
+
+      <div className="px-6 py-3 text-xs text-gray-300">
+        <p>© {new Date().getFullYear()} School Management System</p>
+      </div>
     </aside>
   );
 };

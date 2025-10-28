@@ -1,74 +1,79 @@
-import { useEffect, useState } from 'react';
-import { Building, Users, BookOpen } from 'lucide-react';
-import api from '../../utils/api';
+import { useEffect, useState } from "react";
+import { Building2, Users2, GraduationCap } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
+import api from "../../utils/api";
 
-const StatCard = ({ icon: Icon, label, value, className }) => (
-  <div className={`p-6 bg-white rounded-xl shadow-sm ${className}`}>
-    <div className="flex items-center space-x-4">
-      <div className="p-3 bg-blue-50 rounded-lg">
-        <Icon size={24} className="text-blue-600" />
+const StatCard = ({ icon: Icon, label, value, color }) => (
+  <Card
+    className="shadow-sm hover:shadow-md transition-shadow border-l-4"
+    style={{ borderColor: color }}
+  >
+    <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <CardTitle className="text-xl font-bold text-gray-900">{label}</CardTitle>
+      <div className="p-2 rounded-md bg-muted">
+        <Icon size={22} className="text-primary" />
       </div>
-      <div>
-        <h3 className="text-sm font-medium text-gray-600">{label}</h3>
-        <p className="text-2xl font-semibold mt-1">{value}</p>
-      </div>
-    </div>
-  </div>
+    </CardHeader>
+    <CardContent>
+      <p className="text-2xl font-semibold text-gray-700">{value}</p>
+    </CardContent>
+  </Card>
 );
 
 const SuperAdminDashboard = () => {
   const [stats, setStats] = useState({
     campusCount: 0,
-    userCount: 0,
-    classCount: 0,
+    studentCount: 0,
+    teacherCount: 0,
   });
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await api.get('/dashboard/super-admin/stats');
+        const { data } = await api.get("/dashboard/getOverview");
         setStats(data);
       } catch (error) {
-        console.error('Failed to fetch stats:', error);
+        console.error("Failed to fetch stats:", error);
       }
     };
-
     fetchStats();
   }, []);
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Super Admin Dashboard</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <h1 className="text-3xl font-bold tracking-tight">Super Admin Dashboard</h1>
+
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
-          icon={Building}
+          icon={Building2}
           label="Total Campuses"
           value={stats.campusCount}
-          className="border-l-4 border-blue-500"
+          color="#3b82f6" 
         />
         <StatCard
-          icon={Users}
-          label="Total Users"
-          value={stats.userCount}
-          className="border-l-4 border-green-500"
+          icon={Users2}
+          label="Total Students"
+          value={stats.studentCount}
+          color="#22c55e" // green-500
         />
         <StatCard
-          icon={BookOpen}
-          label="Total Classes"
-          value={stats.classCount}
-          className="border-l-4 border-purple-500"
+          icon={GraduationCap}
+          label="Total Teachers"
+          value={stats.teacherCount}
+          color="#f59e0b" 
         />
       </div>
 
-      {/* Recent Activity Section */}
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          {/* Activity content will go here */}
-          <p className="text-gray-500">No recent activity to display.</p>
-        </div>
-      </div>
+      {/* <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Recent Activity</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground text-sm">
+            No recent activity to display.
+          </p>
+        </CardContent>
+      </Card> */}
     </div>
   );
 };

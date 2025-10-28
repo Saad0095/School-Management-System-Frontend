@@ -23,9 +23,9 @@ const App = () => {
           <Route index element={<SuperAdminDashboard />} />
           <Route path="campuses" element={<div>Campuses</div>} />
           <Route path="users" element={<div>Users</div>} />
-          <Route path="reports" element={<div>Reports</div>} />
 
           {/* Campus Admin Routes */}
+          {/* <Route index element={<CampusAdminDashboard /> /> */}
           <Route path="teachers" element={<div>Teachers</div>} />
           <Route path="students" element={<div>Students</div>} />
           <Route path="classes" element={<div>Classes</div>} />

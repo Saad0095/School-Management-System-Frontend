@@ -26,7 +26,7 @@ const Login = () => {
         user.role == "super-admin" || user.role == "campus-admin"
           ? "admin"
           : user.role;
-      navigate(`/${role}`);
+      navigate(`/${role}/dashboard`);
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }

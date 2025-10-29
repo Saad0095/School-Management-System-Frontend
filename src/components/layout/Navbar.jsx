@@ -1,17 +1,23 @@
 import { useAuth } from "../../context/AuthContext";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const Navbar = () => {
+const Navbar = ({ onToggle = () => {} }) => {
   const { user, logout } = useAuth();
 
   return (
-    <nav className="fixed top-0 right-0 h-16 w-[calc(100%-16rem)] bg-secondary shadow-sm z-20 border-b border-gray-200">
+    <nav className="fixed top-0 right-0 h-16 md:w-[calc(100%-16rem)] bg-secondary shadow-sm z-20 border-b border-gray-200 w-full">
       <div className="h-full px-6 flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Welcome! {user?.name}
-          </h2>
+          <button
+            className="md:hidden p-2 rounded hover:bg-gray-100 mr-2 cursor-pointer"
+            onClick={onToggle}
+            aria-label="Open sidebar"
+          >
+            <Menu size={18} />
+          </button>
+
+          <h2 className="hidden md:block text-xl font-semibold text-gray-800">Welcome! {user?.name}</h2>
         </div>
 
         <div className="flex items-center space-x-5">

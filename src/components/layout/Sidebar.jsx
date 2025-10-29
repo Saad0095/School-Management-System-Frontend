@@ -44,49 +44,78 @@ const menuItems = {
   ],
 };
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen = false, onClose = () => {} }) => {
   const { user } = useAuth();
   const role = user?.role.toLowerCase() || "student";
 
+  // classes: hidden/slide on mobile, always visible on md+
+  const base =
+    "fixed left-0 top-0 h-screen w-64 bg-primary text-white flex flex-col shadow-lg z-40 transform transition-transform duration-200";
+  const mobileHidden = "-translate-x-full md:translate-x-0"; // hidden by default on mobile
+  const mobileVisible = "translate-x-0 md:translate-x-0"; // shown when open on mobile
+
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-primary text-white flex flex-col shadow-lg">
-      <div className="px-6 py-5 border-b border-gray-300">
-        <h1 className="text-lg font-semibold tracking-wide">
-          School Management
-        </h1>
-        <p className="text-xs text-white/70 capitalize mt-1">
-          {role} panel
-        </p>
-      </div>
+    <>
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-30 md:hidden"
+          onClick={onClose}
+          aria-hidden
+        />
+      )}
 
-      <nav className="flex-1 overflow-y-auto px-4 py-6">
-        <ul className="space-y-1">
-          {menuItems[role]?.map((item) => (
-            <li key={item.path}>
-              <NavLink
-                to={item.path}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-white text-primary"
-                      : "text-white/90 hover:bg-white/10"
-                  }`
-                }
-              >
-                <item.icon size={18} />
-                <span>{item.label}</span>
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      <aside
+        // keep sidebar fixed so it does not push main content down on md+
+        className={`${base} ${isOpen ? mobileVisible : mobileHidden} md:translate-x-0`}
+        aria-hidden={!isOpen && typeof window !== 'undefined' && window.innerWidth < 768}
+      >
+        <div className="px-6 py-5 border-b border-gray-300">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-lg font-semibold tracking-wide">School Management</h1>
+              <p className="text-xs text-white/70 capitalize mt-1">{role} panel</p>
+            </div>
+            <button
+              className="cursor-pointer md:hidden ml-2 text-white/90 p-1 rounded hover:bg-white/10"
+              onClick={onClose}
+              aria-label="Close sidebar"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
 
-      <Separator className="bg-gray-300" />
+        <nav className="flex-1 overflow-y-auto px-4 py-6">
+          <ul className="space-y-1">
+            {menuItems[role]?.map((item) => (
+              <li key={item.path}>
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      isActive ? "bg-white text-primary" : "text-white/90 hover:bg-white/10"
+                    }`
+                  }
+                  onClick={() => {
+                    // close sidebar on mobile after navigation
+                    if (onClose) onClose();
+                  }}
+                >
+                  <item.icon size={18} />
+                  <span>{item.label}</span>
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-      <div className="px-6 py-3 text-xs text-gray-300">
-        <p>© {new Date().getFullYear()} School Management System</p>
-      </div>
-    </aside>
+        <Separator className="bg-gray-300" />
+
+        <div className="px-6 py-3 text-xs text-gray-300">
+          <p>© {new Date().getFullYear()} School Management System</p>
+        </div>
+      </aside>
+    </>
   );
 };
 

@@ -7,34 +7,39 @@ import {
   FileText,
   Brain,
   BarChart,
+  Home,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 
 const menuItems = {
   "super-admin": [
-    { label: "Campuses", icon: Building, path: "/dashboard/campuses" },
-    { label: "Users", icon: Users, path: "/dashboard/users" },
-    // { label: "Reports", icon: BarChart, path: "/dashboard/reports" },
+    { label: "Dashboard", icon: Home, path: "/admin/dashboard" },
+    { label: "Campuses", icon: Building, path: "/admin/campuses" },
+    { label: "Users", icon: Users, path: "/admin/users" },
+    // { label: "Reports", icon: BarChart, path: "/admin/dashboard/reports" },
   ],
   "campus-admin": [
-    { label: "Teachers", icon: Users, path: "/dashboard/teachers" },
-    { label: "Students", icon: GraduationCap, path: "/dashboard/students" },
-    { label: "Classes", icon: Calendar, path: "/dashboard/classes" },
-    { label: "Subjects", icon: FileText, path: "/dashboard/subjects" },
+    { label: "Dashboard", icon: Home, path: "/admin/dashboard" },
+    { label: "Teachers", icon: Users, path: "/admin/teachers" },
+    { label: "Students", icon: GraduationCap, path: "/admin/students" },
+    { label: "Classes", icon: Calendar, path: "/admin/classes" },
+    { label: "Subjects", icon: FileText, path: "/admin/subjects" },
   ],
   "teacher": [
-    { label: "Attendance", icon: Calendar, path: "/dashboard/attendance" },
-    { label: "Exams", icon: FileText, path: "/dashboard/exams" },
-    { label: "Marks", icon: GraduationCap, path: "/dashboard/marks" },
+    // { label: "Dashboard", icon: Home, path: "/teacher/dashboard" },
+    { label: "Attendance", icon: Calendar, path: "/teacher/attendance" },
+    { label: "Exams", icon: FileText, path: "/teacher/exams" },
+    { label: "Marks", icon: GraduationCap, path: "/teacher/marks" },
   ],
   "student": [
-    { label: "Attendance", icon: Calendar, path: "/dashboard/my-attendance" },
-    { label: "Marksheets", icon: FileText, path: "/dashboard/my-marksheets" },
+    // { label: "Dashboard", icon: Home, path: "/student/dashboard" },
+    { label: "Attendance", icon: Calendar, path: "/student/dashboard/my-attendance" },
+    { label: "Marksheets", icon: FileText, path: "/student/dashboard/my-marksheets" },
     {
       label: "AI Recommendations",
       icon: Brain,
-      path: "/dashboard/ai-recommendations",
+      path: "/student/ai-recommendations",
     },
   ],
 };

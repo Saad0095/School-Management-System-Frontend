@@ -19,26 +19,39 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      navigate("/dashboard");
+      const {user} = await login(email, password);
+      console.log(user);
+      
+      const role =
+        user.role == "super-admin" || user.role == "campus-admin"
+          ? "admin"
+          : user.role;
+      navigate(`/${role}`);
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-50 to-indigo-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-100 via-purple-50 to-indigo-100 p-4">
       <Card className="w-full max-w-md shadow-xl border-0 bg-white/95 backdrop-blur-md rounded-2xl overflow-hidden">
-        <CardHeader className="text-center py-8 bg-gradient-to-r from-blue-600 to-indigo-600">
+        <CardHeader className="text-center py-8 bg-linear-to-r from-blue-600 to-indigo-600">
           <CardTitle className="text-3xl font-bold text-white tracking-tight">
             School Management System
           </CardTitle>
-          <p className="text-sm text-blue-100 mt-2">Sign in to access your dashboard</p>
+          <p className="text-sm text-blue-100 mt-2">
+            Sign in to access your dashboard
+          </p>
         </CardHeader>
         <CardContent className="p-8">
           {error && (
-            <Alert variant="destructive" className="mb-6 bg-red-50 border-red-200 rounded-lg">
-              <AlertDescription className="text-red-700">{error}</AlertDescription>
+            <Alert
+              variant="destructive"
+              className="mb-6 bg-red-50 border-red-200 rounded-lg"
+            >
+              <AlertDescription className="text-red-700">
+                {error}
+              </AlertDescription>
             </Alert>
           )}
           <form onSubmit={handleSubmit} className="space-y-6">

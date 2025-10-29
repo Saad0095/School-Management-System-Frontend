@@ -33,14 +33,14 @@ const menuItems = {
     { label: "Marks", icon: GraduationCap, path: "/teacher/marks" },
   ],
   "student": [
-    // { label: "Dashboard", icon: Home, path: "/student/dashboard" },
-    { label: "Attendance", icon: Calendar, path: "/student/dashboard/my-attendance" },
-    { label: "Marksheets", icon: FileText, path: "/student/dashboard/my-marksheets" },
-    {
-      label: "AI Recommendations",
-      icon: Brain,
-      path: "/student/ai-recommendations",
-    },
+    { label: "Dashboard", icon: Home, path: "/student/dashboard" },
+    { label: "Attendance", icon: Calendar, path: "/student/my-attendance" },
+    { label: "Marksheets", icon: FileText, path: "/student/my-marksheets" },
+    // {
+    //   label: "AI Recommendations",
+    //   icon: Brain,
+    //   path: "/student/ai-recommendations",
+    // },
   ],
 };
 

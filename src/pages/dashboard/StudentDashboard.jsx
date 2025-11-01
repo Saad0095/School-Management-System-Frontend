@@ -40,7 +40,7 @@ const StudentDashboard = () => {
 
       <Separator />
 
-      {/* Quick Stats */}
+      {/* Static Data for now... */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <Card className="border border-gray-200 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">

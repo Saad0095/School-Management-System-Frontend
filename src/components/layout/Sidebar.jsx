@@ -17,6 +17,8 @@ const menuItems = {
     { label: "Dashboard", icon: Home, path: "/admin/dashboard" },
     { label: "Campuses", icon: Building, path: "/admin/campuses" },
     { label: "Users", icon: Users, path: "/admin/users" },
+    { label: "Marksheets", icon: FileText, path: "/admin/marksheets" },
+
     // { label: "Reports", icon: BarChart, path: "/admin/dashboard/reports" },
   ],
   "campus-admin": [
@@ -26,13 +28,13 @@ const menuItems = {
     { label: "Classes", icon: Calendar, path: "/admin/classes" },
     { label: "Subjects", icon: FileText, path: "/admin/subjects" },
   ],
-  "teacher": [
+  teacher: [
     // { label: "Dashboard", icon: Home, path: "/teacher/dashboard" },
     { label: "Attendance", icon: Calendar, path: "/teacher/attendance" },
     { label: "Exams", icon: FileText, path: "/teacher/exams" },
     { label: "Marks", icon: GraduationCap, path: "/teacher/marks" },
   ],
-  "student": [
+  student: [
     { label: "Dashboard", icon: Home, path: "/student/dashboard" },
     { label: "Attendance", icon: Calendar, path: "/student/my-attendance" },
     { label: "Marksheets", icon: FileText, path: "/student/my-marksheets" },
@@ -66,14 +68,22 @@ const Sidebar = ({ isOpen = false, onClose = () => {} }) => {
 
       <aside
         // keep sidebar fixed so it does not push main content down on md+
-        className={`${base} ${isOpen ? mobileVisible : mobileHidden} md:translate-x-0`}
-        aria-hidden={!isOpen && typeof window !== 'undefined' && window.innerWidth < 768}
+        className={`${base} ${
+          isOpen ? mobileVisible : mobileHidden
+        } md:translate-x-0`}
+        aria-hidden={
+          !isOpen && typeof window !== "undefined" && window.innerWidth < 768
+        }
       >
         <div className="px-6 py-5 border-b border-gray-300">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg font-semibold tracking-wide">School Management</h1>
-              <p className="text-xs text-white/70 capitalize mt-1">{role} panel</p>
+              <h1 className="text-lg font-semibold tracking-wide">
+                School Management
+              </h1>
+              <p className="text-xs text-white/70 capitalize mt-1">
+                {role} panel
+              </p>
             </div>
             <button
               className="cursor-pointer md:hidden ml-2 text-white/90 p-1 rounded hover:bg-white/10"
@@ -93,7 +103,9 @@ const Sidebar = ({ isOpen = false, onClose = () => {} }) => {
                   to={item.path}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                      isActive ? "bg-white text-primary" : "text-white/90 hover:bg-white/10"
+                      isActive
+                        ? "bg-white text-primary"
+                        : "text-white/90 hover:bg-white/10"
                     }`
                   }
                   onClick={() => {

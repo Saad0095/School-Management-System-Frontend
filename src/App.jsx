@@ -6,6 +6,7 @@ import DashboardLayout from "./components/layout/DashboardLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
+import StudentMarksheet from "./pages/marksheet/StudentMarksheet";
 
 const App = () => {
   return (
@@ -17,7 +18,7 @@ const App = () => {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["super-admin", "campus-admin"]}>
               <DashboardLayout />
             </ProtectedRoute>
           }
@@ -30,13 +31,14 @@ const App = () => {
           <Route path="students" element={<div>Students</div>} />
           <Route path="classes" element={<div>Classes</div>} />
           <Route path="subjects" element={<div>Subjects</div>} />
+          <Route path="marksheets" element={<StudentMarksheet/>} />
         </Route>
 
         {/* Teacher */}
         <Route
           path="/teacher"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["teacher"]}>
               <DashboardLayout />
             </ProtectedRoute>
           }
@@ -52,7 +54,7 @@ const App = () => {
         <Route
           path="/student"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["student"]}>
               <DashboardLayout />
             </ProtectedRoute>
           }
@@ -60,11 +62,7 @@ const App = () => {
           <Route index element={<StudentDashboard />} />
           <Route path="dashboard" element={<StudentDashboard />} />
           <Route path="my-attendance" element={<div>My Attendance</div>} />
-          <Route path="my-marksheets" element={<div>My Marksheets</div>} />
-          <Route
-            path="ai-recommendations"
-            element={<div>AI Study Recommendations</div>}
-          />
+          <Route path="my-marksheets" element={<StudentMarksheet/>} />
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />

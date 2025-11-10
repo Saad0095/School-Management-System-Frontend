@@ -7,6 +7,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 import StudentMarksheet from "./pages/marksheet/StudentMarksheet";
+import AddScores from "./pages/exams/AddScores";
 
 const App = () => {
   return (
@@ -47,7 +48,7 @@ const App = () => {
           <Route path="dashboard" element={<TeacherDashboard />} />
           <Route path="attendance" element={<div>Attendance</div>} />
           <Route path="exams" element={<div>Exams</div>} />
-          <Route path="marks" element={<div>Marks</div>} />
+          <Route path="marks" element={<AddScores/>} />
         </Route>
 
         {/* Student */}

@@ -8,12 +8,14 @@ import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 import StudentMarksheet from "./pages/marksheet/StudentMarksheet";
 import AddScores from "./pages/exams/AddScores";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 const App = () => {
   return (
     <AuthProvider>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Super & Campus Admin */}
         <Route
@@ -32,7 +34,7 @@ const App = () => {
           <Route path="students" element={<div>Students</div>} />
           <Route path="classes" element={<div>Classes</div>} />
           <Route path="subjects" element={<div>Subjects</div>} />
-          <Route path="marksheets" element={<StudentMarksheet/>} />
+          <Route path="marksheets" element={<StudentMarksheet />} />
         </Route>
 
         {/* Teacher */}
@@ -63,7 +65,7 @@ const App = () => {
           <Route index element={<StudentDashboard />} />
           <Route path="dashboard" element={<StudentDashboard />} />
           <Route path="my-attendance" element={<div>My Attendance</div>} />
-          <Route path="my-marksheets" element={<StudentMarksheet/>} />
+          <Route path="my-marksheets" element={<StudentMarksheet />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />

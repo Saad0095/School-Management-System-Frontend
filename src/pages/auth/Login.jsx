@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -18,10 +19,11 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const {user} = await login(email, password);
+      const { user } = await login(email, password);
       console.log(user);
-      
+
       const role =
         user.role == "super-admin" || user.role == "campus-admin"
           ? "admin"
@@ -29,6 +31,8 @@ const Login = () => {
       navigate(`/${role}/dashboard`);
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,12 +102,23 @@ const Login = () => {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
+              <div className="flex justify-end mt-2">
+                <a
+                  href="/forgot-password"
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  Forgot Password?
+                </a>
+              </div>
             </div>
+
             <Button
               type="submit"
-              className="w-full h-12 mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-md cursor-pointer"
+              className={`w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-md cursor-pointer ${
+                loading ? "italic opacity-60 cursor-not-allowed" : ""
+              }`}
             >
-              Sign In
+              {loading ? "Signing In..." : "Sign In"}
             </Button>
           </form>
           <p className="text-center text-xs text-gray-500 mt-6">

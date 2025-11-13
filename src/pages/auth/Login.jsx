@@ -22,7 +22,6 @@ const Login = () => {
     setLoading(true);
     try {
       const { user } = await login(email, password);
-      console.log(user);
 
       const role =
         user.role == "super-admin" || user.role == "campus-admin"

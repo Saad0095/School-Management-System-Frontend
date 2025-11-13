@@ -14,6 +14,8 @@ const StudentDashboard = () => {
   useEffect(() => {
     const fetchRemarks = async () => {
       try {
+        console.log("Getting Remarks...");
+        
         const data = await api.get(`/ai/recommendation/${user?._id}`);
         console.log(data);
         setRecommendation(data.recommendation);

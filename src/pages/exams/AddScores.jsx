@@ -1,209 +1,182 @@
 import { useEffect, useState } from "react";
 import api from "@/utils/api";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 
+// API Needed to get students
 const AddScores = () => {
   const [loading, setLoading] = useState(true);
-  const [exams, setExams] = useState([]);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(5);
-  const [totalExams, setTotalExams] = useState(0);
-  const [selectedExam, setSelectedExam] = useState(null);
+  const [examData, setExamData] = useState([]);
+  const [selectedClass, setSelectedClass] = useState("");
+  const [selectedSubject, setSelectedSubject] = useState("");
+  const [selectedExamType, setSelectedExamType] = useState("");
+  const [subjects, setSubjects] = useState([]);
+  const [examTypes, setExamTypes] = useState([]);
+  const [students, setStudents] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchExams = async () => {
       setLoading(true);
-      setError("");
       try {
-        const data = await api.get("/exams", {
-          params: { page, limit },
-        });
-        console.log(data);
-
-        setExams(data?.exams || []);
-        setTotalExams((data?.totalExams ?? data?.total) || 0);
-        setPage(data?.page ?? page);
-        setLimit(data?.limit ?? limit);
+        const res = await api.get("/exams", { params: { page: 1, limit: 100 } });
+        setExamData(res?.data || []);
       } catch (err) {
         console.error(err);
-        setError(err?.message || "Failed to load exams");
+        setError("Failed to load exam data");
       } finally {
         setLoading(false);
       }
     };
     fetchExams();
-  }, [page, limit]);
+  }, []);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil((totalExams || exams.length) / limit)
-  );
+  // ✅ Class selected → update subjects
+  const handleClassChange = (value) => {
+    setSelectedClass(value);
+    setSelectedSubject("");
+    setSelectedExamType("");
+    setStudents([]);
+    const foundClass = examData.find((c) => c.class === value);
+    setSubjects(foundClass ? foundClass.subjects : []);
+  };
+
+  // ✅ Subject selected → update exam types
+  const handleSubjectChange = (value) => {
+    setSelectedSubject(value);
+    setSelectedExamType("");
+    setStudents([]);
+    const foundSubject = subjects.find((s) => s.subject === value);
+    setExamTypes(foundSubject ? foundSubject.exams : []);
+  };
+
+  // ✅ Exam type selected → fetch students for that class
+  const handleExamTypeChange = async (value) => {
+    setSelectedExamType(value);
+    setStudents([]);
+    try {
+      // Replace with your API endpoint for fetching students of a class
+      const res = await api.get("/students", { params: { class: selectedClass } });
+      // Add a 'marks' field for input
+      const studentList = (res?.data || []).map((s) => ({ ...s, marks: "" }));
+      setStudents(studentList);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load students");
+    }
+  };
+
+  // ✅ Handle marks input change
+  const handleMarksChange = (studentId, value) => {
+    setStudents((prev) =>
+      prev.map((s) => (s._id === studentId ? { ...s, marks: value } : s))
+    );
+  };
 
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-3xl font-bold">Add Scores</h1>
 
       <Card>
-        <CardHeader className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold">Exams List</CardTitle>
-          <div className="text-sm text-gray-600">
-            Page {page} of {totalPages} — {totalExams} exams
-          </div>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">Select Exam Details</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="space-y-3">
-              {[...Array(5)].map((_, i) => (
+              {[...Array(3)].map((_, i) => (
                 <Skeleton key={i} className="h-10 w-full" />
               ))}
             </div>
           ) : error ? (
             <div className="text-red-600">{error}</div>
           ) : (
-            <div className="rounded-md border max-h-[70vh] overflow-auto">
-              <Table>
-                <TableHeader className="sticky top-0 bg-gray-100 z-10">
-                  <TableRow>
-                    <TableHead>Term</TableHead>
-                    <TableHead>Session</TableHead>
-                    <TableHead>Class</TableHead>
-                    <TableHead>Subject</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Total Marks</TableHead>
-                    <TableHead>Campus</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
+            <>
+              {/* Dropdowns */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                  <Label>Class</Label>
+                  <Select value={selectedClass} onValueChange={handleClassChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Class" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {examData.map((cls) => (
+                        <SelectItem key={cls.class} value={cls.class}>
+                          {cls.class}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                <TableBody>
-                  {exams.map((exam) => (
-                    <TableRow key={exam._id} className="hover:bg-gray-50">
-                      <TableCell>{exam.term}</TableCell>
-                      <TableCell>{exam.academicSession}</TableCell>
-                      <TableCell>
-                        {exam.class?.grade}-{exam.class?.section}
-                      </TableCell>
-                      <TableCell>{exam.subject?.name}</TableCell>
-                      <TableCell>{exam.type}</TableCell>
-                      <TableCell>{exam.totalMarks}</TableCell>
-                      <TableCell>{exam.campus?.name}</TableCell>
-                      <TableCell>
-                        {new Date(exam.createdAt).toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button size="sm" onClick={() => setSelectedExam(exam)}>
-                          Add Scores
-                        </Button>
-                      </TableCell>
-                    </TableRow>
+                <div>
+                  <Label>Subject</Label>
+                  <Select
+                    value={selectedSubject}
+                    onValueChange={handleSubjectChange}
+                    disabled={!selectedClass}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Subject" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subjects.map((s) => (
+                        <SelectItem key={s.subject} value={s.subject}>
+                          {s.subject}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label>Examination Type</Label>
+                  <Select
+                    value={selectedExamType}
+                    onValueChange={handleExamTypeChange}
+                    disabled={!selectedSubject}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Exam Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {examTypes.map((exam, i) => (
+                        <SelectItem key={i} value={exam.type}>
+                          {exam.type} ({exam.totalMarks} Marks)
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Students input */}
+              {students.length > 0 && (
+                <div className="space-y-3 max-h-[60vh] overflow-auto">
+                  <h2 className="text-lg font-semibold mb-2">Enter Marks:</h2>
+                  {students.map((s) => (
+                    <div key={s._id} className="flex items-center gap-4">
+                      <span className="w-1/3">{s.name}</span>
+                      <Input
+                        type="number"
+                        value={s.marks}
+                        onChange={(e) => handleMarksChange(s._id, e.target.value)}
+                        placeholder="Enter Marks"
+                        className="w-1/4"
+                        min={0}
+                      />
+                    </div>
                   ))}
-                </TableBody>
-              </Table>
-            </div>
+                </div>
+              )}
+            </>
           )}
-
-          <div className="mt-4 flex items-center justify-between">
-            <div className="text-sm text-gray-600">
-              Showing {exams.length} of {totalExams || exams.length}
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
-              >
-                Previous
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page >= totalPages}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
         </CardContent>
       </Card>
-
-      {selectedExam && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Selected Exam</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-              <div>
-                <div className="text-gray-600">Type</div>
-                <div className="font-medium">{selectedExam.type}</div>
-              </div>
-              <div>
-                <div className="text-gray-600">Term / Session</div>
-                <div className="font-medium">
-                  {selectedExam.term} / {selectedExam.academicSession}
-                </div>
-              </div>
-              <div>
-                <div className="text-gray-600">Class</div>
-                <div className="font-medium">
-                  {selectedExam.class?.grade} {selectedExam.class?.section}
-                </div>
-              </div>
-              <div>
-                <div className="text-gray-600">Subject</div>
-                <div className="font-medium">{selectedExam.subject?.name}</div>
-              </div>
-              <div>
-                <div className="text-gray-600">Campus</div>
-                <div className="font-medium">{selectedExam.campus?.name}</div>
-              </div>
-              <div>
-                <div className="text-gray-600">Total Marks</div>
-                <div className="font-medium">{selectedExam.totalMarks}</div>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <p className="text-sm text-gray-600">
-                Click "Load students" to fetch the student list for this
-                class/exam and begin adding scores.
-              </p>
-              <div className="mt-3">
-                <Button
-                  size="sm"
-                  onClick={() =>
-                    alert(
-                      "Next step: load students for this exam (not implemented)"
-                    )
-                  }
-                >
-                  Load students
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="ml-2"
-                  onClick={() => setSelectedExam(null)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };

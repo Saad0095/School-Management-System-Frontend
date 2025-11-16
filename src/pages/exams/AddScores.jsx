@@ -2,28 +2,40 @@ import { useEffect, useState } from "react";
 import api from "@/utils/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 
-// API Needed to get students
 const AddScores = () => {
   const [loading, setLoading] = useState(true);
-  const [examData, setExamData] = useState([]);
-  const [selectedClass, setSelectedClass] = useState("");
-  const [selectedSubject, setSelectedSubject] = useState("");
-  const [selectedExamType, setSelectedExamType] = useState("");
+  const [classes, setClasses] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [examTypes, setExamTypes] = useState([]);
   const [students, setStudents] = useState([]);
+  const [examData, setExamData] = useState([]); // store full nested API response
+
+  const [selectedClass, setSelectedClass] = useState(null); // will store object {_id, class}
+  const [selectedSubject, setSelectedSubject] = useState(null); // will store object {_id, subject}
+  const [selectedExamType, setSelectedExamType] = useState(null); // string
+  const [selectedExamObj, setSelectedExamObj] = useState(null); // store chosen exam object
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchExams = async () => {
+    const fetchExamData = async () => {
       setLoading(true);
       try {
         const res = await api.get("/exams", { params: { page: 1, limit: 100 } });
-        setExamData(res?.data || []);
+        const payload = res?.data ?? [];
+        console.log("exams payload:", payload);
+
+        setExamData(payload);
+        setClasses(payload);
       } catch (err) {
         console.error(err);
         setError("Failed to load exam data");
@@ -31,37 +43,56 @@ const AddScores = () => {
         setLoading(false);
       }
     };
-    fetchExams();
+
+    fetchExamData();
   }, []);
 
-  // ✅ Class selected → update subjects
-  const handleClassChange = (value) => {
-    setSelectedClass(value);
-    setSelectedSubject("");
-    setSelectedExamType("");
+  // Handle class selection
+  const handleClassChange = (clsId) => {
+    const cls = classes.find(c => c._id === clsId);
+    setSelectedClass(cls);
+    setSelectedSubject(null);
+    setSelectedExamType(null);
     setStudents([]);
-    const foundClass = examData.find((c) => c.class === value);
-    setSubjects(foundClass ? foundClass.subjects : []);
+    setSubjects(cls?.subjects || []);
+    setExamTypes([]);
   };
 
-  // ✅ Subject selected → update exam types
-  const handleSubjectChange = (value) => {
-    setSelectedSubject(value);
-    setSelectedExamType("");
+  // Handle subject selection
+  const handleSubjectChange = (subjId) => {
+    const subj = subjects.find(s => s._id === subjId);
+    setSelectedSubject(subj);
+    setSelectedExamType(null);
     setStudents([]);
-    const foundSubject = subjects.find((s) => s.subject === value);
-    setExamTypes(foundSubject ? foundSubject.exams : []);
+    setExamTypes(subj?.exams || []);
   };
 
-  // ✅ Exam type selected → fetch students for that class
-  const handleExamTypeChange = async (value) => {
-    setSelectedExamType(value);
+  // Handle exam type selection & fetch students
+  const handleExamTypeChange = async (examType) => {
+    setSelectedExamType(examType);
     setStudents([]);
+    if (!selectedClass || !selectedSubject) return;
+
     try {
-      // Replace with your API endpoint for fetching students of a class
-      const res = await api.get("/students", { params: { class: selectedClass } });
-      // Add a 'marks' field for input
-      const studentList = (res?.data || []).map((s) => ({ ...s, marks: "" }));
+      const res = await api.get("/score/examScores", {
+        params: {
+          classId: selectedClass._id,
+          subjectId: selectedSubject._id,
+          examType,
+        },
+      });
+
+      console.log(res);
+      const payload = res?.data ?? res;
+
+      // find the exam object from selectedSubject.exams that matches the type
+      const examObj = (selectedSubject?.exams || []).find((ex) => ex.type === examType) || null;
+      setSelectedExamObj(examObj);
+
+      const studentList = (payload?.scores || payload?.students || []).map((s) => ({
+        ...s,
+        marks: s.marks ?? 0,
+      }));
       setStudents(studentList);
     } catch (err) {
       console.error(err);
@@ -69,10 +100,9 @@ const AddScores = () => {
     }
   };
 
-  // ✅ Handle marks input change
   const handleMarksChange = (studentId, value) => {
     setStudents((prev) =>
-      prev.map((s) => (s._id === studentId ? { ...s, marks: value } : s))
+      prev.map((s) => (s.student._id === studentId ? { ...s, marks: value } : s))
     );
   };
 
@@ -95,17 +125,20 @@ const AddScores = () => {
             <div className="text-red-600">{error}</div>
           ) : (
             <>
-              {/* Dropdowns */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {/* Class Select */}
                 <div>
                   <Label>Class</Label>
-                  <Select value={selectedClass} onValueChange={handleClassChange}>
+                  <Select
+                    value={selectedClass?._id || ""}
+                    onValueChange={handleClassChange}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select Class" />
                     </SelectTrigger>
                     <SelectContent>
-                      {examData.map((cls) => (
-                        <SelectItem key={cls.class} value={cls.class}>
+                      {classes.map((cls) => (
+                        <SelectItem key={cls._id} value={cls._id}>
                           {cls.class}
                         </SelectItem>
                       ))}
@@ -113,10 +146,11 @@ const AddScores = () => {
                   </Select>
                 </div>
 
+                {/* Subject Select */}
                 <div>
                   <Label>Subject</Label>
                   <Select
-                    value={selectedSubject}
+                    value={selectedSubject?._id || ""}
                     onValueChange={handleSubjectChange}
                     disabled={!selectedClass}
                   >
@@ -125,7 +159,7 @@ const AddScores = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {subjects.map((s) => (
-                        <SelectItem key={s.subject} value={s.subject}>
+                        <SelectItem key={s._id} value={s._id}>
                           {s.subject}
                         </SelectItem>
                       ))}
@@ -133,10 +167,11 @@ const AddScores = () => {
                   </Select>
                 </div>
 
+                {/* Exam Type Select */}
                 <div>
                   <Label>Examination Type</Label>
                   <Select
-                    value={selectedExamType}
+                    value={selectedExamType || ""}
                     onValueChange={handleExamTypeChange}
                     disabled={!selectedSubject}
                   >
@@ -144,9 +179,9 @@ const AddScores = () => {
                       <SelectValue placeholder="Select Exam Type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {examTypes.map((exam, i) => (
-                        <SelectItem key={i} value={exam.type}>
-                          {exam.type} ({exam.totalMarks} Marks)
+                      {examTypes.map((ex) => (
+                        <SelectItem key={ex._id || ex.type} value={ex.type}>
+                          {`${ex.type} (${ex.totalMarks ?? ex.totalMarks})`}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -154,20 +189,23 @@ const AddScores = () => {
                 </div>
               </div>
 
-              {/* Students input */}
+              {/* Students Marks Input */}
               {students.length > 0 && (
                 <div className="space-y-3 max-h-[60vh] overflow-auto">
                   <h2 className="text-lg font-semibold mb-2">Enter Marks:</h2>
                   {students.map((s) => (
-                    <div key={s._id} className="flex items-center gap-4">
-                      <span className="w-1/3">{s.name}</span>
+                    <div key={s.student._id} className="flex items-center gap-4">
+                      <span className="w-1/3">{s.student.name}</span>
                       <Input
                         type="number"
                         value={s.marks}
-                        onChange={(e) => handleMarksChange(s._id, e.target.value)}
+                        onChange={(e) =>
+                          handleMarksChange(s.student._id, e.target.value)
+                        }
                         placeholder="Enter Marks"
                         className="w-1/4"
                         min={0}
+                        max={selectedExamObj?.totalMarks ?? undefined}
                       />
                     </div>
                   ))}

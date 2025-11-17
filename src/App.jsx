@@ -9,10 +9,12 @@ import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 import StudentMarksheet from "./pages/marksheet/StudentMarksheet";
 import AddScores from "./pages/exams/AddScores";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import { Toaster } from "@/components/ui/sonner";
 
 const App = () => {
   return (
     <AuthProvider>
+      <Toaster />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

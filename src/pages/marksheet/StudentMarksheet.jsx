@@ -10,8 +10,12 @@ const StudentMarksheet = () => {
   const term = searchParams.get("term") || "FirstTerm";
   const academicSession = searchParams.get("academicSession") || "2025-2026";
   const page = parseInt(searchParams.get("page") || "1", 10);
-  const studentId = searchParams.get("studentId") || (user?.role === "student" ? user?.id : null);
-  const classId = searchParams.get("classId") || (user?.role === "teacher" ? user?.classId : null);
+  const studentId =
+    searchParams.get("studentId") ||
+    (user?.role === "student" ? user?.id : null);
+  const classId =
+    searchParams.get("classId") ||
+    (user?.role === "teacher" ? user?.classId : null);
 
   const [result, setResult] = useState(null);
   const [selected, setSelected] = useState(null);
@@ -28,9 +32,6 @@ const StudentMarksheet = () => {
           params: { term, academicSession, studentId, classId, page },
         });
         setResult(res);
-        if (res?.marksheets?.length > 1 && user?.role === "student") {
-          return <p>Please Download Zip File...</p>;
-        }
         setSelected(res?.marksheets?.[0] || null);
       } catch (err) {
         console.error(err);
@@ -119,11 +120,11 @@ const StudentMarksheet = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">
-            {user?.role === "student" 
-              ? "My Marksheet" 
-              : user?.role === "teacher" 
-                ? "Class Marksheets" 
-                : "Student Marksheets"}
+            {user?.role === "student"
+              ? "My Marksheet"
+              : user?.role === "teacher"
+              ? "Class Marksheets"
+              : "Student Marksheets"}
           </h1>
           <p className="text-sm text-gray-600">
             {term} — {academicSession}
@@ -131,7 +132,9 @@ const StudentMarksheet = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          {(user?.role === "admin" || user?.role === "teacher" || result?.marksheets?.length > 1) && (
+          {(user?.role === "admin" ||
+            user?.role === "teacher" ||
+            result?.marksheets?.length > 1) && (
             <Button onClick={downloadZIP}>Download ZIP</Button>
           )}
         </div>
@@ -146,7 +149,9 @@ const StudentMarksheet = () => {
             className="px-3 py-2 border rounded"
             value={searchParams.get("studentId") || ""}
             onChange={(e) => {
-              const next = new URLSearchParams(Object.fromEntries([...searchParams]));
+              const next = new URLSearchParams(
+                Object.fromEntries([...searchParams])
+              );
               if (e.target.value) {
                 next.set("studentId", e.target.value);
               } else {
@@ -157,6 +162,78 @@ const StudentMarksheet = () => {
           />
         </div>
       )}
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-3 items-center bg-gray-50 p-4 rounded border">
+        <select
+          value={term}
+          onChange={(e) =>
+            setSearchParams({
+              ...Object.fromEntries(searchParams),
+              term: e.target.value,
+            })
+          }
+          className="px-3 py-2 border rounded"
+        >
+          <option value="FirstTerm">First Term</option>
+          <option value="MidTerm">Mid Term</option>
+          <option value="FinalTerm">Final Term</option>
+        </select>
+
+        <select
+          value={academicSession}
+          onChange={(e) =>
+            setSearchParams({
+              ...Object.fromEntries(searchParams),
+              academicSession: e.target.value,
+            })
+          }
+          className="px-3 py-2 border rounded"
+        >
+          <option value="2025-2026">2025 - 2026</option>
+          <option value="2024-2025">2024 - 2025</option>
+        </select>
+
+        {/* Admin/Teacher Only: Class Filter */}
+        {(user?.role === "admin" || user?.role === "teacher") && (
+          <input
+            type="text"
+            placeholder="Class ID"
+            className="px-3 py-2 border rounded"
+            value={classId || ""}
+            onChange={(e) => {
+              const next = new URLSearchParams(
+                Object.fromEntries([...searchParams])
+              );
+              if (e.target.value) next.set("classId", e.target.value);
+              else next.delete("classId");
+              setSearchParams(next);
+            }}
+          />
+        )}
+
+        {/* Admin/Teacher Only: Student Filter */}
+        {(user?.role === "admin" || user?.role === "teacher") && (
+          <input
+            type="text"
+            placeholder="Student ID"
+            className="px-3 py-2 border rounded"
+            value={studentId || ""}
+            onChange={(e) => {
+              const next = new URLSearchParams(
+                Object.fromEntries([...searchParams])
+              );
+              if (e.target.value) next.set("studentId", e.target.value);
+              else next.delete("studentId");
+              setSearchParams(next);
+            }}
+          />
+        )}
+
+        <Button onClick={() => setSearchParams({})} variant="outline">
+          Reset
+        </Button>
+      </div>
 
       <div className="flex items-center gap-3">
         <label className="text-sm text-gray-600">Select marksheet:</label>

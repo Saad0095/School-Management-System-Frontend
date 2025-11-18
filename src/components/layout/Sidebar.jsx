@@ -29,9 +29,9 @@ const menuItems = {
     { label: "Subjects", icon: FileText, path: "/admin/subjects" },
   ],
   teacher: [
-    // { label: "Dashboard", icon: Home, path: "/teacher/dashboard" },
+    { label: "Dashboard", icon: Home, path: "/teacher/dashboard" },
     { label: "Attendance", icon: Calendar, path: "/teacher/attendance" },
-    { label: "Exams", icon: FileText, path: "/teacher/exams" },
+    // { label: "Exams", icon: FileText, path: "/teacher/exams" },
     { label: "Marks", icon: GraduationCap, path: "/teacher/marks" },
   ],
   student: [

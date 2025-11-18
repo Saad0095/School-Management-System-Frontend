@@ -7,11 +7,14 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 import StudentMarksheet from "./pages/marksheet/StudentMarksheet";
+import AddScores from "./pages/exams/AddScores";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import { Toaster } from "@/components/ui/sonner";
 
 const App = () => {
   return (
     <AuthProvider>
+      <Toaster />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -49,7 +52,7 @@ const App = () => {
           <Route path="dashboard" element={<TeacherDashboard />} />
           <Route path="attendance" element={<div>Attendance</div>} />
           <Route path="exams" element={<div>Exams</div>} />
-          <Route path="marks" element={<div>Marks</div>} />
+          <Route path="marks" element={<AddScores/>} />
         </Route>
 
         {/* Student */}

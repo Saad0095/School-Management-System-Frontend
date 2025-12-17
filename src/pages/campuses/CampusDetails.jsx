@@ -18,6 +18,7 @@ const CampusDetails = () => {
             try {
                 const res = await api.get(`/campuses/${id}`);
                 setCampus(res);
+                console.log(res)
             } catch (err) {
                 console.error("Error fetching campus details:", err);
             }
@@ -43,8 +44,8 @@ const CampusDetails = () => {
     if (!campus) return <p>Loading...</p>;
 
     const classColumns = [
-        { header: "Class Name", accessorKey: "name" },
-        { header: "Teacher", accessorKey: "teacherName" },
+        { header: "Class Name", accessorKey: "className" },
+        { header: "Teacher", accessorKey: "classTeacher.name" },
         { header: "Students", accessorKey: "studentCount" },
     ];
 

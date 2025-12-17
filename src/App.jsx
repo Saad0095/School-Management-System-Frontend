@@ -9,6 +9,7 @@ import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 import StudentMarksheet from "./pages/marksheet/StudentMarksheet";
 import Campus from "./pages/campuses/Campus";
 import CampusDetails from "./pages/campuses/CampusDetails";
+import AddCampus from "./pages/campuses/AddCampus";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
           <Route index element={<AdminDashboard />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="campuses" element={<Campus/>} />
+          <Route path="campuses/add" element={<AddCampus />} />
           <Route path="campuses/:id" element={<CampusDetails/>} />
           <Route path="users" element={<div>Users</div>} />
           <Route path="teachers" element={<div>Teachers</div>} />

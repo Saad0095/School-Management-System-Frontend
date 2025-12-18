@@ -10,6 +10,9 @@ import StudentMarksheet from "./pages/marksheet/StudentMarksheet";
 import AddScores from "./pages/exams/AddScores";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import { Toaster } from "@/components/ui/sonner";
+import Campus from "./pages/campuses/Campus";
+import CampusDetails from "./pages/campuses/CampusDetails";
+import AddCampus from "./pages/campuses/AddCampus";
 
 const App = () => {
   return (
@@ -30,7 +33,9 @@ const App = () => {
         >
           <Route index element={<AdminDashboard />} />
           <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="campuses" element={<div>Campuses</div>} />
+          <Route path="campuses" element={<Campus/>} />
+          <Route path="campuses/add" element={<AddCampus />} />
+          <Route path="campuses/:id" element={<CampusDetails/>} />
           <Route path="users" element={<div>Users</div>} />
           <Route path="teachers" element={<div>Teachers</div>} />
           <Route path="students" element={<div>Students</div>} />

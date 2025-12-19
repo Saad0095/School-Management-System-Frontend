@@ -13,6 +13,8 @@ import { Toaster } from "@/components/ui/sonner";
 import Campus from "./pages/campuses/Campus";
 import CampusDetails from "./pages/campuses/CampusDetails";
 import AddCampus from "./pages/campuses/AddCampus";
+import Class from "./pages/classes/Class";
+import ClassDetails from "./pages/classes/ClassDetails";
 
 const App = () => {
   return (
@@ -39,7 +41,8 @@ const App = () => {
           <Route path="users" element={<div>Users</div>} />
           <Route path="teachers" element={<div>Teachers</div>} />
           <Route path="students" element={<div>Students</div>} />
-          <Route path="classes" element={<div>Classes</div>} />
+          <Route path="classes" element={<Class />} />
+          <Route path="classes/:id" element={<ClassDetails />} />
           <Route path="subjects" element={<div>Subjects</div>} />
           <Route path="marksheets" element={<StudentMarksheet />} />
         </Route>
